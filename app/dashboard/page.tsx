@@ -4,6 +4,68 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import type { User } from "@supabase/supabase-js";
+import { Search, Zap, TrendingUp } from "lucide-react";
+
+type SearchHeroProps = {
+  searchTerm: string;
+  setSearchTerm: (value: string) => void;
+  onSearch: () => void;
+};
+
+export function SearchHero({
+  searchTerm,
+  setSearchTerm,
+  onSearch,
+}: SearchHeroProps) {
+  return (
+    <div className="w-full max-w-3xl mx-auto">
+      <div className="flex items-center overflow-hidden rounded-full border border-slate-700 bg-[#111827] shadow-lg">
+
+        <div className="pl-6 text-slate-500">
+          <Search size={22} />
+        </div>
+
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Escribe una palabra o frase"
+          className="
+            flex-1
+            bg-transparent
+            px-4
+            py-1
+            text-lg
+            text-white
+            placeholder:text-slate-500
+            outline-none
+          "
+        />
+
+        <div className="h-10 w-px bg-slate-700" />
+
+        <button
+          onClick={onSearch}
+          className="
+            flex
+            items-center
+            gap-2
+            px-8
+            py-5
+            font-semibold
+            text-white
+            transition
+            hover:bg-white/5
+          "
+        >
+          <Zap size={18} />
+          Analizar
+        </button>
+
+      </div>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
     
@@ -11,6 +73,15 @@ export default function DashboardPage() {
 
     const [user, setUser] = useState<User | null>(null);
     const [open, setOpen] = useState(false);
+
+    //Estado para la barra de búsqueda
+    const [searchTerm, setSearchTerm] = useState("");
+
+    //Estado para renderizar el resultado
+    const [result, setResult] = useState<{
+        name: string;
+        popularity: number;
+    } | null>(null);
 
     useEffect(() => 
     {
@@ -37,15 +108,36 @@ export default function DashboardPage() {
     const email = user?.email;
 
     return (
-        <main className="p-8">
-        <h1 className="text-3xl font-bold">
-            Dashboard
+        <main className="min-h-screen bg-[#070b1a]">
+        
+        <div className="flex justify-center">
+            <span className="gap-2 flex rounded-full border border-blue-500/30 bg-blue-500/10 px-5 py-2 text-sm text-blue-400">
+              <TrendingUp size={16} />
+              POPULARIDAD EN TIEMPO REAL
+            </span>
+        </div>
+
+        <h1 className="mt-4 text-center text-2xl font-bold text-slate-100">
+            ¿Qué tan popular es...?
         </h1>
 
-        <p className="mt-4">
-            Bienvenido, {userName}
+        <p className="mt-1 text-center text-m text-slate-400">
+            Buscamos en múltiples fuentes y te mostramos el impacto real
         </p>
 
+        <div className="mt-7">
+            <SearchHero
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                onSearch={() => {
+                    setResult({
+                    name: searchTerm,
+                    popularity: 85,
+                    });
+                }} />
+        </div>
+
+        
         {user && (
             <div className="absolute top-6 right-6">
             <img
