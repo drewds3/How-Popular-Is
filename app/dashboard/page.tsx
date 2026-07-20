@@ -4,68 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import type { User } from "@supabase/supabase-js";
-import { Search, Zap, TrendingUp } from "lucide-react";
+import {TrendingUp } from "lucide-react";
 
-type SearchHeroProps = {
-  searchTerm: string;
-  setSearchTerm: (value: string) => void;
-  onSearch: () => void;
-};
-
-export function SearchHero({
-  searchTerm,
-  setSearchTerm,
-  onSearch,
-}: SearchHeroProps) {
-  return (
-    <div className="w-full max-w-3xl mx-auto">
-      <div className="flex items-center overflow-hidden rounded-full border border-slate-700 bg-[#111827] shadow-lg">
-
-        <div className="pl-6 text-slate-500">
-          <Search size={22} />
-        </div>
-
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Escribe una palabra o frase"
-          className="
-            flex-1
-            bg-transparent
-            px-4
-            py-1
-            text-lg
-            text-white
-            placeholder:text-slate-500
-            outline-none
-          "
-        />
-
-        <div className="h-10 w-px bg-slate-700" />
-
-        <button
-          onClick={onSearch}
-          className="
-            flex
-            items-center
-            gap-2
-            px-8
-            py-5
-            font-semibold
-            text-white
-            transition
-            hover:bg-white/5
-          "
-        >
-          <Zap size={18} />
-          Analizar
-        </button>
-
-      </div>
-    </div>
-  );
-}
+import SearchHero from "@/components/SearchHero";
+import ResultsDashboard from "@/components/ResultsDashboard";
 
 export default function DashboardPage() {
     
@@ -191,6 +133,14 @@ export default function DashboardPage() {
             
         </div>
         )}
+
+        {result && (
+          <div>
+          <div className="my-8 h-px w-full bg-gradient-to-r from-transparent via-slate-500 to-transparent" />
+          <ResultsDashboard keyword={result.name} />
+          </div>
+        )}
+
         </main>
     );
 }
