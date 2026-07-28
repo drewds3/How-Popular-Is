@@ -68,7 +68,7 @@ export default function DashboardPage() {
 
         setResult({
             keyword: data.query,
-            platforms: generatePlatforms(data.wikipediaViews),
+            platforms: generatePlatforms(data.wikipediaViews, data.newsMentions),
         });
     };
 

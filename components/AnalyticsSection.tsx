@@ -10,7 +10,7 @@ export default function AnalyticsSection(
       <div className="mt-8 space-y-6">
         <PlatformsGrid 
         platforms = {result.result.platforms}/>
-        <TrendChart />
+       {/*  <TrendChart /> */}
       </div>
     )
 }

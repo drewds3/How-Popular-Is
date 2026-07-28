@@ -41,8 +41,7 @@ export default function ResultsDashboard({
         <>
         <SummaryCard
           keyword={result.keyword}
-          score={85}
-          trend={12}
+          platforms={result.platforms}
         />
 
         <AnalyticsSection

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getWikipediaViews } from "@/lib/wikipedia";
+import { getNewsMentions } from "@/lib/news";
 
 export async function GET(request: Request) 
 {
@@ -21,9 +22,14 @@ export async function GET(request: Request)
       query.replaceAll(" ", "_")
     );
 
+    const newsMentions = await getNewsMentions(
+      query
+    );
+
     return NextResponse.json({
       query,
-      wikipediaViews: views
+      wikipediaViews: views,
+      newsMentions
     });
   } catch 
   {
