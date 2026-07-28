@@ -5,13 +5,15 @@ import SummaryCard from "./SummaryCard"
 import Tabs from "./Tabs"
 import AnalyticsSection from "./AnalyticsSection"
 
-type ResultsDashboardProps = {
-  keyword: string
+import type {SearchResult} from "@/app/dashboard/page"
+
+export type PlatformsProps = {
+  result: SearchResult;
 }
 
 export default function ResultsDashboard({
-  keyword,
-}: ResultsDashboardProps) {
+  result
+}: PlatformsProps) {
   const [activeTab, setActiveTab] =
     useState("Resumen")
 
@@ -31,19 +33,20 @@ export default function ResultsDashboard({
         </div>
 
         <div className="self-start rounded-full border border-blue-500/30 bg-blue-500/10 px-4 text-blue-400">
-          {keyword}
+          {result.keyword}
         </div>
       </div>
 
       {activeTab === "Resumen" && (
         <>
         <SummaryCard
-          keyword={keyword}
+          keyword={result.keyword}
           score={85}
           trend={12}
         />
 
-        <AnalyticsSection />
+        <AnalyticsSection
+          result = {result}/>
         </>
       )}
 

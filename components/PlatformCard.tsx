@@ -1,8 +1,9 @@
 import { LucideIcon } from "lucide-react"
 
-type PlatformCardProps = {
+export type PlatformCardProps = {
   name: string
   score: number
+  rawValue: number
   color: string
   icon?: LucideIcon
   letter?: string

@@ -1,11 +1,16 @@
 import PlatformsGrid from "./PlatformsGrid"
 import TrendChart from "./TrendChart"
 
-export default function AnalyticsSection() {
-  return (
-    <div className="mt-8 space-y-6">
-      <PlatformsGrid />
-      <TrendChart />
-    </div>
-  )
+import type {PlatformsProps} from "./ResultsDashboard"
+
+export default function AnalyticsSection(
+  result : PlatformsProps) 
+  {
+    return (
+      <div className="mt-8 space-y-6">
+        <PlatformsGrid 
+        platforms = {result.result.platforms}/>
+        <TrendChart />
+      </div>
+    )
 }

@@ -9,23 +9,29 @@ import {TrendingUp } from "lucide-react";
 import SearchHero from "@/components/SearchHero";
 import ResultsDashboard from "@/components/ResultsDashboard";
 
+//
+import type { PlatformCardProps } from "@/components/PlatformCard";
+import { generatePlatforms } from "@/lib/platformFactories";
+
+export type SearchResult = {
+  keyword: string;
+  platforms: PlatformCardProps[];
+};
+
 export default function DashboardPage() {
     
-    const router = useRouter();
+    /* const router = useRouter();
 
-    const [user, setUser] = useState<User | null>(null);
-    const [open, setOpen] = useState(false);
+    const [user, setUser] = useState<User | null>(null); */
+    /* const [open, setOpen] = useState(false); */
 
     //Estado para la barra de búsqueda
     const [searchTerm, setSearchTerm] = useState("");
 
     //Estado para renderizar el resultado
-    const [result, setResult] = useState<{
-        name: string;
-        popularity: number;
-    } | null>(null);
+    const [result, setResult] = useState<SearchResult | null>(null);
 
-    useEffect(() => 
+    /* useEffect(() => 
     {
         const checkAndLoadUser = async () => 
         {
@@ -44,10 +50,27 @@ export default function DashboardPage() {
 
         checkAndLoadUser();
     }, [router]);
-
-    const avatarUrl = user?.user_metadata?.avatar_url;
+ */
+    /* const avatarUrl = user?.user_metadata?.avatar_url;
     const userName = user?.user_metadata?.full_name;
-    const email = user?.email;
+    const email = user?.email; */
+
+    //Función que actualiza los resultados de la búqueda
+    const handleSearch = async () => 
+    {
+        const response = await fetch(
+            `/api/search?q=${encodeURIComponent(searchTerm)}`
+        );
+
+        const data = await response.json();
+
+        console.log(data);
+
+        setResult({
+            keyword: data.query,
+            platforms: generatePlatforms(data.wikipediaViews),
+        });
+    };
 
     return (
         <main className="min-h-screen bg-[#070b1a]">
@@ -71,16 +94,11 @@ export default function DashboardPage() {
             <SearchHero
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
-                onSearch={() => {
-                    setResult({
-                    name: searchTerm,
-                    popularity: 85,
-                    });
-                }} />
+                onSearch={handleSearch} />
         </div>
 
         
-        {user && (
+        {/* {user && (
             <div className="absolute top-6 right-6">
             <img
             src={avatarUrl || ""}
@@ -132,12 +150,12 @@ export default function DashboardPage() {
             </div>
             
         </div>
-        )}
+        )} */}
 
         {result && (
           <div>
           <div className="my-8 h-px w-full bg-gradient-to-r from-transparent via-slate-500 to-transparent" />
-          <ResultsDashboard keyword={result.name} />
+          <ResultsDashboard result = {result}/>
           </div>
         )}
 
