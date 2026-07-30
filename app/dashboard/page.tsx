@@ -60,7 +60,7 @@ export default function DashboardPage() {
     {
         const response = await fetch(
             `/api/search?q=${encodeURIComponent(searchTerm)}`
-        );
+        ); 
 
         const data = await response.json();
 
@@ -68,7 +68,10 @@ export default function DashboardPage() {
 
         setResult({
             keyword: data.query,
-            platforms: generatePlatforms(data.wikipediaViews, data.newsMentions),
+            platforms: generatePlatforms(
+                data.wikipediaViews, 
+                data.newsMentions, 
+                data.youtubeViews),
         });
     };
 

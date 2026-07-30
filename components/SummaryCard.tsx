@@ -7,14 +7,14 @@ import { PlatformCardProps } from "./PlatformCard";
 function createScore(platforms : PlatformCardProps[])
 {
   let totalScore = 0;
-
+ 
   platforms.forEach((platform) => {
     totalScore += platform.score;
   });
 
   const averageScore = totalScore / platforms.length;
 
-  return averageScore;
+  return Math.floor(averageScore);
 }
 
 //Función principal
@@ -52,7 +52,7 @@ export default function SummaryCard({
           </h2>
 
           <p className="mt-2 text-slate-400">
-            {keyword} aparece en tendencia en {popularInPlatformsCount} de 6 fuentes analizadas
+            {keyword} aparece en tendencia en {popularInPlatformsCount} de {platforms.length} fuentes analizadas
             durante los últimos 30 días.
           </p>
 

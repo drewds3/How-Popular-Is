@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getWikipediaViews } from "@/lib/wikipedia";
 import { getNewsMentions } from "@/lib/news";
+import { getYoutubePopularity } from "@/lib/youtube";
 
 export async function GET(request: Request) 
 {
@@ -16,26 +17,43 @@ export async function GET(request: Request)
     );
   }
 
+  let wikipediaViews = -1;
+
   try 
   {
-    const views = await getWikipediaViews(
-      query.replaceAll(" ", "_")
-    );
+    wikipediaViews = await getWikipediaViews(
+    query.replaceAll(" ", "_"));
+  } catch (error) 
+  {
+    console.error("Wikipedia:", error);
+  }
 
-    const newsMentions = await getNewsMentions(
-      query
-    );
+  let newsMentions = -1;
+
+  try 
+  {
+    newsMentions = await getNewsMentions(
+    query);
+  } catch (error) 
+  {
+    console.error("GNews:", error);
+  }
+  
+  let youtubeViews = -1
+  
+  try {
+    youtubeViews = await getYoutubePopularity(query);
+  } catch (error)
+  {
+    console.error("Youtube:", error);
+  }
 
     return NextResponse.json({
       query,
-      wikipediaViews: views,
-      newsMentions
+      wikipediaViews,
+      newsMentions,
+      youtubeViews
     });
-  } catch 
-  {
-    return NextResponse.json(
-      { error: "No se encontraron datos" },
-      { status: 500 }
-    );
-  }
+ 
+  
 }

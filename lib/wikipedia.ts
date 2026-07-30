@@ -1,9 +1,11 @@
 export async function searchWikipedia(query: string) {
   const response = await fetch(
     `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
-      query
-    )}`
-  );
+      query)}`, 
+      {headers: {"User-Agent":
+      "How Popular Is/0.1 (Popularity dashboard)",
+      },
+    });
 
   if (!response.ok) {
     throw new Error("Error buscando en Wikipedia");

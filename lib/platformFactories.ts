@@ -6,8 +6,10 @@ import {
   Newspaper,
   TreePalm,
   LucideIcon,
-  Globe
+  Globe,
+  Frown
 } from "lucide-react"
+import { getYoutubeViews } from "./youtube";
 
 /* const platforms = [
   {
@@ -94,18 +96,57 @@ function createNewsPlatform(
     };
 }
 
+function createYoutubePlatform(
+  youtubeViews: number
+){
+    const score = Math.min(
+    100,
+    Math.round(
+        Math.pow(
+        Math.log10(youtubeViews + 1) 
+        / Math.log10(100000000),
+        2.3
+        ) * 100
+    )
+    );
+    
+    return {
+      name: "Youtube",
+      score: score,
+      rawValue: youtubeViews ,
+      color: "#FF4B5C",
+      icon: Play,
+    };
+}
+
 export function generatePlatforms(
     wikipediaViews: number,
-    articles: number
+    articles: number,
+    youtubeViews: number
 ){
     const platforms : PlatformCardProps[] = [];
 
-    platforms.push(
-        createWikipediaPlatform(wikipediaViews))
+    if(wikipediaViews > -1) platforms.push(
+      createWikipediaPlatform(wikipediaViews))
 
-    platforms.push(
+    if(articles > -1) platforms.push(
       createNewsPlatform(articles)
     )
 
-    return platforms
+    if(youtubeViews > -1) platforms.push(
+      createYoutubePlatform(youtubeViews)
+    )
+
+    if (platforms.length > 0) return platforms
+    else 
+    {
+      platforms.push({
+        name: "No se ha podido conectar a ninguna plataforma",
+          score: -1,
+          rawValue: -1,
+          color: "#F59E0B",
+          icon: Frown,
+      });
+      return platforms;
+    } 
 }
