@@ -119,10 +119,23 @@ function createYoutubePlatform(
     };
 }
 
+function createGooglePlatform(
+  score: number
+){    
+    return {
+      name: "Google",
+      score: Math.floor(score),
+      rawValue: score ,
+      color: "#6284FF",
+      letter: "G",
+    };
+}
+
 export function generatePlatforms(
     wikipediaViews: number,
     articles: number,
-    youtubeViews: number
+    youtubeViews: number,
+    scoreGoogleTrends: number
 ){
     const platforms : PlatformCardProps[] = [];
 
@@ -135,6 +148,10 @@ export function generatePlatforms(
 
     if(youtubeViews > -1) platforms.push(
       createYoutubePlatform(youtubeViews)
+    )
+
+    if(scoreGoogleTrends > -1) platforms.push(
+      createGooglePlatform(scoreGoogleTrends)
     )
 
     if (platforms.length > 0) return platforms

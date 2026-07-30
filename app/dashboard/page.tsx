@@ -71,7 +71,8 @@ export default function DashboardPage() {
             platforms: generatePlatforms(
                 data.wikipediaViews, 
                 data.newsMentions, 
-                data.youtubeViews),
+                data.youtubeViews,
+            data.scoreGoogleTrends),
         });
     };
 

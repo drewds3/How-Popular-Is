@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getWikipediaViews } from "@/lib/wikipedia";
 import { getNewsMentions } from "@/lib/news";
 import { getYoutubePopularity } from "@/lib/youtube";
+import { getGoogleTrendsScore }
+from "@/lib/googleTrends";
 
 export async function GET(request: Request) 
 {
@@ -48,11 +50,21 @@ export async function GET(request: Request)
     console.error("Youtube:", error);
   }
 
+  let scoreGoogleTrends = -1;
+
+  try{
+    scoreGoogleTrends = await getGoogleTrendsScore(query);
+  } catch (error)
+  {
+    console.error("GoogleTrends:", error)
+  }
+
     return NextResponse.json({
       query,
       wikipediaViews,
       newsMentions,
-      youtubeViews
+      youtubeViews,
+      scoreGoogleTrends
     });
  
   
