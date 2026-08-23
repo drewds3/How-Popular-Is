@@ -13,6 +13,9 @@ import ResultsDashboard from "@/components/ResultsDashboard";
 import type { PlatformCardProps } from "@/components/PlatformCard";
 import { generatePlatforms } from "@/lib/platformFactories";
 
+//
+import LoadingDashboard from "@/components/LoadingDashboard";
+
 export type SearchResult = {
   keyword: string;
   platforms: PlatformCardProps[];
@@ -34,6 +37,9 @@ export default function DashboardPage() {
 
     // Estado del historial
     const [history, setHistory] = useState<string[]>([]);
+
+    // Animación de carga
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => 
     {
@@ -75,8 +81,6 @@ export default function DashboardPage() {
         const uniqueQueries = [...new Set(queries)];
 
         return uniqueQueries;
-
-        //return data.map(item => item.query);
     };
 
     useEffect(() => {
@@ -104,49 +108,58 @@ export default function DashboardPage() {
         return;
         }
 
-        // Guardar historial de búsqueda
-        const { data: { user },
-        } = await supabase.auth.getUser();
+        setLoading(true);
 
-        console.log("USER:", user);
+        setResult(null);
 
-        if (!user) { 
-        console.error("Usuario no autenticado");
-        return;}
+        try {
+            // Guardar historial de búsqueda
+            const { data: { user },
+            } = await supabase.auth.getUser();
 
-        const { error } = await supabase
-        .from("search_history")
-        .insert({
-            user_id: user.id,
-            query: query,
-        });
+            console.log("USER:", user);
 
-        if (error) {
-        console.log("ERROR COMPLETO:");
-        console.log(error);
+            if (!user) { 
+            console.error("Usuario no autenticado");
+            return;}
+
+            const { error } = await supabase
+            .from("search_history")
+            .insert({
+                user_id: user.id,
+                query: query,
+            });
+
+            if (error) {
+            console.log("ERROR COMPLETO:");
+            console.log(error);
+            }
+
+            const historyData = await loadHistory();
+            setHistory(historyData);
+
+            // Llamadas a las apis
+
+            const response = await fetch(
+                `/api/search?q=${encodeURIComponent(query)}`
+            ); 
+
+            const data = await response.json();
+
+            console.log(data);
+
+            setResult({
+                keyword: data.query,
+                platforms: generatePlatforms(
+                    data.wikipediaViews, 
+                    data.newsMentions, 
+                    data.youtubeViews,
+                data.scoreGoogleTrends),
+            });
+        } finally {
+
+        setLoading(false);
         }
-
-        const historyData = await loadHistory();
-        setHistory(historyData);
-
-        // Llamadas a las apis
-
-        const response = await fetch(
-            `/api/search?q=${encodeURIComponent(query)}`
-        ); 
-
-        const data = await response.json();
-
-        console.log(data);
-
-        setResult({
-            keyword: data.query,
-            platforms: generatePlatforms(
-                data.wikipediaViews, 
-                data.newsMentions, 
-                data.youtubeViews,
-            data.scoreGoogleTrends),
-        });
     };
 
     return (
@@ -172,8 +185,19 @@ export default function DashboardPage() {
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
                 onSearch={handleSearch}
-                history={history} />
+                history={history} 
+                loading={loading} />
         </div>
+
+        {loading && (
+        <>
+            <div className="my-8 h-px w-full bg-gradient-to-r from-transparent via-slate-500 to-transparent" />
+
+            <LoadingDashboard
+            query={searchTerm}
+            />
+        </>
+        )}
 
         {user && (
             <div className="absolute top-6 right-6">

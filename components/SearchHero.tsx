@@ -7,13 +7,15 @@ type SearchHeroProps = {
   setSearchTerm: (value: string) => void;
   onSearch: (query?: string) => void;
   history: string[];
+  loading: boolean;
 };
 
 export default function SearchHero({
   searchTerm,
   setSearchTerm,
   onSearch,
-   history,
+  history,
+  loading
 }: SearchHeroProps) {
   
   const [showHistory, setShowHistory] = useState(false);
@@ -69,7 +71,7 @@ export default function SearchHero({
 
         <button
           onClick={() => onSearch()}
-          disabled={!searchTerm.trim()}
+          disabled={!searchTerm.trim() || loading}
           className="
             flex
             items-center
@@ -84,8 +86,18 @@ export default function SearchHero({
             disabled:cursor-not-allowed
           "
         >
-          <Zap size={18} />
-          Analizar
+          {loading ? (
+            <>
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              Analizando...
+            </>
+          ) : (
+            <>
+              <Zap size={18} />
+              Analizar
+            </>
+          )}
+          
         </button>
 
       </div>
