@@ -1,18 +1,46 @@
 import { Search, Zap} from "lucide-react";
 
+import { useState, useEffect, useRef } from "react";
+
 type SearchHeroProps = {
   searchTerm: string;
   setSearchTerm: (value: string) => void;
-  onSearch: () => void;
+  onSearch: (query?: string) => void;
+  history: string[];
 };
 
 export default function SearchHero({
   searchTerm,
   setSearchTerm,
   onSearch,
+   history,
 }: SearchHeroProps) {
+  
+  const [showHistory, setShowHistory] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      searchRef.current &&
+      !searchRef.current.contains(event.target as Node)
+    ) {
+      setShowHistory(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div 
+      ref={searchRef}
+      className="relative w-full max-w-2xl mx-auto"
+    >
       <div className="flex items-center overflow-hidden rounded-full border border-slate-700 bg-[#111827] shadow-lg">
 
         <div className="pl-6 text-slate-500">
@@ -34,12 +62,14 @@ export default function SearchHero({
             placeholder:text-slate-500
             outline-none
           "
+          onFocus={() => setShowHistory(true)}
         />
 
         <div className="h-10 w-px bg-slate-700" />
 
         <button
-          onClick={onSearch}
+          onClick={() => onSearch()}
+          disabled={!searchTerm.trim()}
           className="
             flex
             items-center
@@ -50,6 +80,8 @@ export default function SearchHero({
             text-white
             transition
             hover:bg-white/5
+            disabled:opacity-50
+            disabled:cursor-not-allowed
           "
         >
           <Zap size={18} />
@@ -57,6 +89,46 @@ export default function SearchHero({
         </button>
 
       </div>
+
+       {showHistory && history.length > 0 && (
+        <div
+          className="
+            absolute
+            left-0
+            right-0
+            mt-2
+            overflow-hidden
+            rounded-2xl
+            border
+            border-slate-700
+            bg-[#111827]
+            shadow-xl
+            z-50
+          "
+        >
+          {history.map((item, index) => (
+            <button
+              key={index}
+              onMouseDown={() => {
+                setSearchTerm(item);
+                setShowHistory(false);
+                onSearch(item);
+              }}
+              className="
+                w-full
+                px-4
+                py-3
+                text-left
+                text-slate-300
+                hover:bg-slate-800
+              "
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      )}
+
     </div>
   );
 }

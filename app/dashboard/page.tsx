@@ -20,10 +20,11 @@ export type SearchResult = {
 
 export default function DashboardPage() {
     
-    /* const router = useRouter();
+    const router = useRouter();
 
-    const [user, setUser] = useState<User | null>(null); */
-    /* const [open, setOpen] = useState(false); */
+    // Estados del usuario
+    const [user, setUser] = useState<User | null>(null);
+    const [open, setOpen] = useState(false);
 
     //Estado para la barra de búsqueda
     const [searchTerm, setSearchTerm] = useState("");
@@ -31,7 +32,10 @@ export default function DashboardPage() {
     //Estado para renderizar el resultado
     const [result, setResult] = useState<SearchResult | null>(null);
 
-    /* useEffect(() => 
+    // Estado del historial
+    const [history, setHistory] = useState<string[]>([]);
+
+    useEffect(() => 
     {
         const checkAndLoadUser = async () => 
         {
@@ -50,16 +54,85 @@ export default function DashboardPage() {
 
         checkAndLoadUser();
     }, [router]);
- */
-    /* const avatarUrl = user?.user_metadata?.avatar_url;
+
+    const loadHistory = async () => {
+        if (!user) return [];
+
+        const { data, error } = await supabase
+            .from("search_history")
+            .select("query")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(10);
+
+        if (error) {
+            console.error(error);
+            return [];
+        }
+
+        const queries = data.map(item => item.query);
+
+        const uniqueQueries = [...new Set(queries)];
+
+        return uniqueQueries;
+
+        //return data.map(item => item.query);
+    };
+
+    useEffect(() => {
+        if (!user) return;
+
+        const fetchHistory = async () => {
+            const historyData = await loadHistory();
+            setHistory(historyData);
+        };
+
+        fetchHistory();
+    }, [user]);
+
+    const avatarUrl = user?.user_metadata?.avatar_url;
     const userName = user?.user_metadata?.full_name;
-    const email = user?.email; */
+    const email = user?.email;
 
     //Función que actualiza los resultados de la búqueda
-    const handleSearch = async () => 
-    {
+    const handleSearch = async (
+        customTerm?: string) => 
+    {   
+        const query = customTerm ?? searchTerm;
+
+        if (!query.trim()) {
+        return;
+        }
+
+        // Guardar historial de búsqueda
+        const { data: { user },
+        } = await supabase.auth.getUser();
+
+        console.log("USER:", user);
+
+        if (!user) { 
+        console.error("Usuario no autenticado");
+        return;}
+
+        const { error } = await supabase
+        .from("search_history")
+        .insert({
+            user_id: user.id,
+            query: query,
+        });
+
+        if (error) {
+        console.log("ERROR COMPLETO:");
+        console.log(error);
+        }
+
+        const historyData = await loadHistory();
+        setHistory(historyData);
+
+        // Llamadas a las apis
+
         const response = await fetch(
-            `/api/search?q=${encodeURIComponent(searchTerm)}`
+            `/api/search?q=${encodeURIComponent(query)}`
         ); 
 
         const data = await response.json();
@@ -98,11 +171,11 @@ export default function DashboardPage() {
             <SearchHero
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
-                onSearch={handleSearch} />
+                onSearch={handleSearch}
+                history={history} />
         </div>
 
-        
-        {/* {user && (
+        {user && (
             <div className="absolute top-6 right-6">
             <img
             src={avatarUrl || ""}
@@ -154,7 +227,7 @@ export default function DashboardPage() {
             </div>
             
         </div>
-        )} */}
+        )}
 
         {result && (
           <div>
