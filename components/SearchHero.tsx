@@ -70,7 +70,10 @@ export default function SearchHero({
         <div className="h-10 w-px bg-slate-700" />
 
         <button
-          onClick={() => onSearch()}
+          onClick={() => {
+            setShowHistory(false);
+            onSearch();
+          }}    
           disabled={!searchTerm.trim() || loading}
           className="
             flex

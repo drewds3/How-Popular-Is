@@ -1,9 +1,15 @@
-export async function searchWikipedia(query: string) {
+import {
+  getCache,
+  saveCache,
+  isExpired
+} from "@/lib/cache";
+
+/* export async function searchWikipedia(query: string) {
   const response = await fetch(
     `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
       query)}`, 
       {headers: {"User-Agent":
-      "How Popular Is/0.1 (Popularity dashboard)",
+      "How Popular Is/0.1 (Popularity dashboard; andriudark777@gmail.com)",
       },
     });
 
@@ -12,7 +18,7 @@ export async function searchWikipedia(query: string) {
   }
 
   return response.json();
-}
+} */
 
 type WikipediaPageView = 
 {
@@ -22,6 +28,21 @@ type WikipediaPageView =
 
 export async function getWikipediaViews(article: string) 
 {
+  //Revisar si está en la caché
+  const cached = await getCache(
+    article,
+    "wikipedia"
+  );
+
+  console.log("CACHE:", cached);
+
+  if ( cached && !isExpired(cached.created_at, 24))
+  {
+    console.log("Wikipedia desde caché");
+
+    return cached.data;
+  }
+
     //Fechas inicial y final
     const today = new Date();
 
@@ -39,7 +60,12 @@ export async function getWikipediaViews(article: string)
         `${start}/${end}`;
 
     //Hacer llamada a la api y pedir datos
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent":
+          "HowPopularIs/0.1 (Popularity Dashboard; andriudark777@gmail.com)"
+      }
+    });
 
     if (!response.ok) {
         throw new Error("Wikipedia no devolvió datos");
@@ -53,5 +79,13 @@ export async function getWikipediaViews(article: string)
         0
     );
 
+    // Se guarda en caché
+    await saveCache(
+      article,
+      "wikipedia",
+      totalViews
+    );  
+
+    console.log("Wikipedia desde API");
     return totalViews;
 }

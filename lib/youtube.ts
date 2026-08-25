@@ -1,3 +1,9 @@
+import {
+  getCache,
+  saveCache,
+  isExpired
+} from "@/lib/cache";
+
 type YoutubeSearchResponse = {
   items: {
     id: {
@@ -49,7 +55,6 @@ type YoutubeStatisticsResponse = {
 export async function getYoutubeViews(
   videoIds: string[]
 ): Promise<number> {
-
   if (videoIds.length === 0) {
     return 0;
   }
@@ -84,9 +89,34 @@ export async function getYoutubeViews(
 export async function getYoutubePopularity(
   query: string
 ): Promise<number> {
+  // Revisar si está guardado en la caché desde hace menos de 1 hora
+  const cached = await getCache(
+    query,
+    "youtube"
+  );
 
+  if (
+    cached &&
+    !isExpired(cached.created_at, 12)
+  )
+  {
+    console.log("Youtube desde caché");
+    return cached.data;
+  }
+
+  // Hacer la llamada a la api
   const ids =
     await searchYoutubeVideos(query);
 
-  return getYoutubeViews(ids);
+  const result = await getYoutubeViews(ids);
+
+  await saveCache(
+    query,
+    "youtube",
+    result
+  );
+
+  console.log("YouTube desde API");
+
+  return result;
 }
