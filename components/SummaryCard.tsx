@@ -39,6 +39,7 @@ export default function SummaryCard({
     if (platform.score > 75) popularInPlatformsCount += 1;
   });
 
+  if ( averageScore > -1)
   return (
     <div className="rounded-3xl border border-slate-800 bg-linear-to-r from-slate-900 to-slate-900/60 p-6">
       <div className="flex items-center gap-8">

@@ -59,6 +59,12 @@ export async function GET(request: Request)
     console.error("GoogleTrends:", error)
   }
 
+
+  /* const wikipediaViews = -1
+  const newsMentions = -1
+  const youtubeViews = -1
+  const scoreGoogleTrends = -1 */
+
     return NextResponse.json({
       query,
       wikipediaViews,
