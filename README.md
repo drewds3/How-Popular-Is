@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# How Popular Is?
+
+A web application that aggregates data from multiple public sources to estimate the popularity of a person, brand, or topic.
+
+## Live Demo
+
+🔗 https://your-domain.com
+
+## Product Preview
+
+**Login**
+
+<img width="1174" height="884" alt="localhost_3000_" src="https://github.com/user-attachments/assets/49290824-5b0c-4e4f-bf38-a78c2b9d5e9c" />
+
+**Dashboard**
+
+<img width="1155" height="1208" alt="localhost_3000_dashboard (1)" src="https://github.com/user-attachments/assets/ade1cd09-fe6a-402d-a94f-25fc77e1d39f" />
+
+## Features
+
+- Google sign-in (Supabase Auth)
+- Protected routes via middleware — the dashboard never renders without a valid session, not even for a fraction of a second
+- Aggregates popularity data from Wikipedia, Google Trends, YouTube, and GNews
+- Result caching to reduce redundant calls to external APIs
+- Per-user search history
+- Graceful error handling when all external sources fail
+- Responsive UI
+
+## Tech Stack
+
+- Next.js
+- React
+- TypeScript
+- Supabase
+- Tailwind CSS
+- SQL (for database in Supabase)
+
+## How Popularity Metrics Are Calculated
+
+The dashboard provides a popularity score based on the average of the following sources:
+
+- **Wikipedia**: article views and content relevance
+- **Google Trends**: search interest over time
+- **YouTube**: video-related popularity indicators
+- **News Sources**: volume and relevance of recent news coverage
+
+Each metric is displayed separately so users can compare different indicators rather than relying on a single score.
 
 ## Getting Started
 
-First, run the development server:
+Clone the repo and install dependencies:
+
+```bash
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
+npm install
+```
+
+Create a `.env.local` file in the project root with your own keys:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+YOUTUBE_API_KEY=
+NEWS_API_KEY=
+```
+
+*(adjust the variable names to match whatever you named them for the YouTube/News/Google Trends integrations in your own code)*
+
+### Supabase setup
+
+- Enable the **Google** provider under Authentication → Providers
+- Add `http://localhost:3000/auth/callback` as an authorized Redirect URL
+- Create a `search_history` table with `id`, `user_id`, `query`, and a timestamp column
+- Create a `api_cache` table with `id`, `query`, `source`, `data` and a timestamp column
+
+### Run the dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> **Note:** this project runs on Supabase's free tier, which pauses the database after 7 days of inactivity. If the live demo seems unresponsive, that may be why — running it locally with your own Supabase project is a reliable fallback.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Purpose
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project explores building a production-style feature end to end: aggregating
+and normalizing data from four independent external APIs (each with its own
+failure modes and rate limits), caching results to stay within free-tier API
+quotas, and protecting authenticated routes at the edge via middleware so
+protected pages never render without a valid session — even for a fraction
+of a second.
