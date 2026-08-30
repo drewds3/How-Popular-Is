@@ -18,6 +18,8 @@ import LoadingDashboard from "@/components/LoadingDashboard";
 
 import UserMenu from "@/components/UserMenu";
 
+import SearchError from "@/components/SearchError";
+
 export type SearchResult = {
   keyword: string;
   platforms: PlatformCardProps[];
@@ -41,6 +43,9 @@ export default function DashboardPage() {
 
     // Animación de carga
     const [loading, setLoading] = useState(false);
+
+    // Manejar si todas las apis fallan
+    const [error, setError] = useState(false);
 
     useEffect(() => 
     {
@@ -113,6 +118,8 @@ export default function DashboardPage() {
 
         setResult(null);
 
+        setError(false);
+
         try {
             // Guardar historial de búsqueda
             const { data: { user },
@@ -145,6 +152,10 @@ export default function DashboardPage() {
                 `/api/search?q=${encodeURIComponent(query)}`
             ); 
 
+            if (!response.ok) {
+              throw new Error("Fallo en la búsqueda");
+            }
+
             const data = await response.json();
 
             console.log(data);
@@ -157,8 +168,9 @@ export default function DashboardPage() {
                     data.youtubeViews,
                 data.scoreGoogleTrends),
             });
+        } catch {
+          setError(true);
         } finally {
-
         setLoading(false);
         }
     };
@@ -208,6 +220,13 @@ export default function DashboardPage() {
         router.push("/");
         }}
     />
+    )}
+
+    {error && !loading && (
+      <>
+        <div className="my-8 h-px w-full bg-gradient-to-r from-transparent via-line to-transparent" />
+        <SearchError query={searchTerm} onRetry={() => handleSearch()} />
+      </>
     )}
 
   { result && (
