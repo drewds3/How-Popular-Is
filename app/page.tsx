@@ -10,17 +10,14 @@ export default function Home()
 {
   const [loading, setLoading] = useState(false);
 
-  const loginWithGoogle = async () => 
-    {
-      await supabase.auth.signInWithOAuth
-      ({
-        provider: "google",
-        options: 
-        {
-          redirectTo: "http://localhost:3000/auth/callback",
-        },
-      });
-    };
+  const loginWithGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+  };
 
   return (
     <main className="flex min-h-screen  justify-center bg-cream px-5 pt-14">
