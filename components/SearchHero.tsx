@@ -1,5 +1,4 @@
-import { Search, Zap} from "lucide-react";
-
+import { Search, Zap } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 type SearchHeroProps = {
@@ -15,37 +14,38 @@ export default function SearchHero({
   setSearchTerm,
   onSearch,
   history,
-  loading
+  loading,
 }: SearchHeroProps) {
-  
   const [showHistory, setShowHistory] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      searchRef.current &&
-      !searchRef.current.contains(event.target as Node)
-    ) {
-      setShowHistory(false);
-    }
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowHistory(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSubmit = () => {
+    if (!searchTerm.trim() || loading) return;
+    setShowHistory(false);
+    onSearch();
   };
 
-  document.addEventListener("mousedown", handleClickOutside);
-
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+  const allowHoverEffect = !isFocused && !loading;
 
   return (
-    <div 
-      ref={searchRef}
-      className="relative w-full max-w-2xl mx-auto"
-    >
-      <div className="flex items-center overflow-hidden rounded-full border border-slate-700 bg-[#111827] shadow-lg">
-
-        <div className="pl-6 text-slate-500">
+    <div ref={searchRef} className="relative w-full max-w-2xl mx-auto">
+      <div
+        className={`flex items-center overflow-hidden rounded-full border border-line bg-surface shadow-sm transition-all duration-300 ${
+          allowHoverEffect ? "hover:border-accent hover:shadow-[0_0_0_4px_rgba(166,50,30,0.12)]" : ""
+        }`}
+      >
+        <div className="pl-6 text-ink-muted">
           <Search size={22} />
         </div>
 
@@ -53,41 +53,22 @@ export default function SearchHero({
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSubmit();
+          }}
           placeholder="Escribe una palabra o frase"
-          className="
-            flex-1
-            bg-transparent
-            px-4
-            py-0
-            text-lg
-            text-white
-            placeholder:text-slate-500
-            outline-none
-          "
-          onFocus={() => setShowHistory(true)}
+          className="flex-1 bg-transparent px-4 py-5 text-lg text-ink placeholder:text-ink-muted outline-none"
+          onFocus={() => {
+            setShowHistory(true);
+            setIsFocused(true);
+          }}
+          onBlur={() => setIsFocused(false)}
         />
 
-        <div className="h-10 w-px bg-slate-700" />
-
         <button
-          onClick={() => {
-            setShowHistory(false);
-            onSearch();
-          }}    
+          onClick={handleSubmit}
           disabled={!searchTerm.trim() || loading}
-          className="
-            flex
-            items-center
-            gap-2
-            px-8
-            py-5
-            font-semibold
-            text-white
-            transition
-            hover:bg-white/5
-            disabled:opacity-50
-            disabled:cursor-not-allowed
-          "
+          className="flex items-center gap-2 self-stretch px-8 font-semibold text-white bg-accent transition hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
             <>
@@ -100,27 +81,11 @@ export default function SearchHero({
               Analizar
             </>
           )}
-          
         </button>
-
       </div>
 
-       {showHistory && history.length > 0 && (
-        <div
-          className="
-            absolute
-            left-0
-            right-0
-            mt-2
-            overflow-hidden
-            rounded-2xl
-            border
-            border-slate-700
-            bg-[#111827]
-            shadow-xl
-            z-50
-          "
-        >
+      {showHistory && history.length > 0 && (
+        <div className="absolute left-0 right-0 mt-2 overflow-hidden rounded-2xl border border-line bg-surface shadow-xl z-50">
           {history.map((item, index) => (
             <button
               key={index}
@@ -129,21 +94,13 @@ export default function SearchHero({
                 setShowHistory(false);
                 onSearch(item);
               }}
-              className="
-                w-full
-                px-4
-                py-3
-                text-left
-                text-slate-300
-                hover:bg-slate-800
-              "
+              className="w-full px-4 py-3 text-left text-ink-soft hover:bg-cream"
             >
               {item}
             </button>
           ))}
         </div>
       )}
-
     </div>
   );
 }

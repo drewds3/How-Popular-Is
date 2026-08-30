@@ -68,7 +68,7 @@ function createWikipediaPlatform(
         name: "Wikipedia",
         score: score,
         rawValue: wikipediaViews,
-        color: "#E9EDE8",
+        color: "#525252",
         icon: Globe,
     };
 }
@@ -91,7 +91,7 @@ function createNewsPlatform(
         name: "Noticias",
         score: score,
         rawValue: articles,
-        color: "#F59E0B",
+        color: "#DF9907",
         icon: Newspaper,
     };
 }
@@ -114,7 +114,7 @@ function createYoutubePlatform(
       name: "Youtube",
       score: score,
       rawValue: youtubeViews ,
-      color: "#FF4B5C",
+      color: "#DB3310",
       icon: Play,
     };
 }
@@ -126,7 +126,7 @@ function createGooglePlatform(
       name: "Google",
       score: Math.floor(score),
       rawValue: score ,
-      color: "#6284FF",
+      color: "#1C68E3",
       letter: "G",
     };
 }

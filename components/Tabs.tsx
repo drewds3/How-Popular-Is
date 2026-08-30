@@ -1,17 +1,10 @@
 type TabsProps = {
-  activeTab: string
-  setActiveTab: (tab: string) => void
-}
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+};
 
-export default function Tabs({
-  activeTab,
-  setActiveTab,
-}: TabsProps) {
-  const tabs = [
-    "Resumen",
-    "Por plataforma",
-    "Tendencia",
-  ]
+export default function Tabs({ activeTab, setActiveTab }: TabsProps) {
+  const tabs = ["Resumen", "Por plataforma", "Tendencia"];
 
   return (
     <div className="flex gap-8">
@@ -21,13 +14,13 @@ export default function Tabs({
           onClick={() => setActiveTab(tab)}
           className={`pb-2 transition ${
             activeTab === tab
-              ? "text-blue-400 border-b-2 border-blue-400"
-              : "text-slate-400 hover:text-white"
+              ? "text-accent border-b-2 border-accent"
+              : "text-ink-muted hover:text-ink"
           }`}
         >
           {tab}
         </button>
       ))}
     </div>
-  )
+  );
 }

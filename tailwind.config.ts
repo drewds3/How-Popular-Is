@@ -1,57 +1,61 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: ["./src/**/*.{ts,tsx}"],
+  content: ["./src/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        // Fondos
-        app:          "#0f1117",
-        card:         "#1a1d27",
-        "card-hover": "#1e2235",
+        // Base
+        cream: "#FBF7F1",
+        surface: "#FFFFFF",
+        "surface-hover": "#F5ECE0",
+        ink: "#2E1B12",
+        "ink-soft": "#6B4A3A",
+        "ink-muted": "#A0876F",
+        line: "#E4D5C6",
+        "line-strong": "#D8C3AE",
 
-        // Acento
+        // Acento (rojo ladrillo) — DEFAULT + variantes tipo "trend"
         accent: {
-          DEFAULT: "#4F7FFF",
-          hover:   "#3d6ee0",
-          bg:      "rgba(79,127,255,0.12)",
-          border:  "rgba(79,127,255,0.30)",
+          DEFAULT: "#A6321E",
+          hover: "#8A2A18",
+          soft: "#C96A4A",
+          bg: "rgba(166,50,30,0.08)",
+          border: "rgba(166,50,30,0.25)",
         },
 
-        // Bordes
-        line:         "#2d3148",
-        "line-strong":"#3d4268",
-
-        // Texto
-        "txt-primary":     "#f0f2f8",
-        "txt-body":        "#e8eaf0",
-        "txt-secondary":   "#9ca3af",
-        "txt-muted":       "#6b7280",
-        "txt-placeholder": "#4b5268",
-
-        // Tendencia
+        // Tendencia (se mantiene, funciona bien sobre fondo claro)
         trend: {
-          DEFAULT: "#34d399",
-          bg:      "rgba(52,211,153,0.10)",
-          border:  "rgba(52,211,153,0.25)",
+          DEFAULT: "#2F8F5B",
+          bg: "rgba(47,143,91,0.10)",
+          border: "rgba(47,143,91,0.25)",
         },
 
-        // Plataformas
-        twitter:  "#1da1f2",
-        youtube:  "#ff4444",
-        facebook: "#4267b2",
-        news:     "#f59e0b",
-      },
+        // Acción destructiva (cerrar sesión, eliminar, etc.)
+        danger: {
+          DEFAULT: "#B3261E",
+          hover: "#8F1E17",
+        },
 
+        // Plataformas (colores de marca, sin cambios)
+        twitter: "#1da1f2",
+        youtube: "#ff4444",
+        facebook: "#4267b2",
+        news: "#f59e0b",
+      },
+      fontFamily: {
+        display: ["var(--font-display)", "serif"],
+        body: ["var(--font-body)", "sans-serif"],
+        mono: ["var(--font-mono)", "monospace"],
+      },
       borderWidth: {
         px: "0.5px",
         "1px": "1px",
       },
-
       keyframes: {
         scanPulse: {
-          "0%, 100%": { height: "8px",  opacity: "0.3" },
-          "50%":      { height: "36px", opacity: "1"   },
+          "0%, 100%": { height: "8px", opacity: "0.3" },
+          "50%": { height: "36px", opacity: "1" },
         },
       },
       animation: {

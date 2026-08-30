@@ -16,6 +16,8 @@ import { generatePlatforms } from "@/lib/platformFactories";
 //
 import LoadingDashboard from "@/components/LoadingDashboard";
 
+import UserMenu from "@/components/UserMenu";
+
 export type SearchResult = {
   keyword: string;
   platforms: PlatformCardProps[];
@@ -27,7 +29,6 @@ export default function DashboardPage() {
 
     // Estados del usuario
     const [user, setUser] = useState<User | null>(null);
-    const [open, setOpen] = useState(false);
 
     //Estado para la barra de búsqueda
     const [searchTerm, setSearchTerm] = useState("");
@@ -163,103 +164,59 @@ export default function DashboardPage() {
     };
 
     return (
-        <main className="min-h-screen bg-[#070b1a]">
-        
-        <div className="flex justify-center">
-            <span className="gap-2 flex rounded-full border border-blue-500/30 bg-blue-500/10 px-5 py-2 text-sm text-blue-400">
-              <TrendingUp size={16} />
-              POPULARIDAD EN TIEMPO REAL
-            </span>
-        </div>
+        <main className="min-h-screen bg-cream relative pt-9 px-4">
 
-        <h1 className="mt-4 text-center text-2xl font-bold text-slate-100">
-            ¿Qué tan popular es...?
-        </h1>
+  <div className="flex justify-center">
+    <span className="gap-2 flex items-center rounded-full border border-accent-border bg-accent-bg px-5 py-2 text-sm text-accent">
+      <TrendingUp size={16} />
+      POPULARIDAD EN TIEMPO REAL
+    </span>
+  </div>
 
-        <p className="mt-1 text-center text-m text-slate-400">
-            Buscamos en múltiples fuentes y te mostramos el impacto real
-        </p>
+  <h1 className="mt-4 text-center pt-2 text-3xl italic text-ink" style={{ fontFamily: "var(--font-display)", fontWeight: 600 }}>
+    ¿Qué tan popular es...?
+  </h1>
 
-        <div className="mt-7">
-            <SearchHero
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                onSearch={handleSearch}
-                history={history} 
-                loading={loading} />
-        </div>
+  <p className="mt-1 text-center text-base text-ink-soft pt-4">
+    Buscamos en múltiples fuentes y te mostramos el impacto real
+  </p>
 
-        {loading && (
-        <>
-            <div className="my-8 h-px w-full bg-gradient-to-r from-transparent via-slate-500 to-transparent" />
+  <div className="mt-7">
+    <SearchHero
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
+      onSearch={handleSearch}
+      history={history}
+      loading={loading}
+    />
+  </div>
 
-            <LoadingDashboard
-            query={searchTerm}
-            />
-        </>
-        )}
+  {loading && (
+    <>
+      <div className="my-8 h-px w-full bg-gradient-to-r from-transparent via-line to-transparent" />
+      <LoadingDashboard query={searchTerm} />
+    </>
+  )}
 
-        {user && (
-            <div className="absolute top-6 right-6">
-            <img
-            src={avatarUrl || ""}
-            alt="Avatar"
-            onClick={() => setOpen(true)}
-            className="h-12 w-12 rounded-full cursor-pointer border-2 border-gray-300"
-            />
-        </div>
-        )}
+  { user && (
+    <UserMenu
+        avatarUrl={avatarUrl}
+        userName={userName}
+        email={email}
+        onSignOut={async () => {
+        await supabase.auth.signOut();
+        router.push("/");
+        }}
+    />
+    )}
 
-        {open && user && (
-        <div
-            className="fixed inset-0 flex items-center justify-center bg-black/60"
-            onClick={() => setOpen(false)}
-        >
-            <div
-            className="bg-white rounded-2xl p-6 w-80 flex flex-col items-center gap-3"
-            onClick={(e) => e.stopPropagation()}
-            >
-            <img
-            src={avatarUrl || ""}
-            alt="Avatar"
-            className="h-20 w-20 rounded-full"
-            />
+  { result && (
+    <div>
+      <div className="my-8 h-px w-full bg-gradient-to-r from-transparent via-line to-transparent" />
+      <ResultsDashboard result={result} />
+    </div>
+  )}
 
-            <h2 className="text-lg font-semibold text-gray-600">
-            {userName}
-            </h2>
-
-            <p className="text-sm text-black">
-            {email}
-            </p>
-            <button
-            onClick={async () => {
-                await supabase.auth.signOut();
-                router.push("/");
-            }}
-            className="mt-2 rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-            >
-            Cerrar sesión
-            </button>
-            <button
-            onClick={() => setOpen(false)}
-            className="text-sm text-gray-500"
-            >
-            Cerrar
-            </button>
-
-            </div>
-            
-        </div>
-        )}
-
-        {result && (
-          <div>
-          <div className="my-8 h-px w-full bg-gradient-to-r from-transparent via-slate-500 to-transparent" />
-          <ResultsDashboard result = {result}/>
-          </div>
-        )}
-
-        </main>
+</main>
     );
 }
