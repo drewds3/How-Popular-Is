@@ -6,6 +6,8 @@ A web application that aggregates data from multiple public sources to estimate 
 
 🔗   https://how-popular-is.vercel.app
 
+> ⚠️ **Project status:** This is a Minimum Viable Product (MVP) built to demonstrate core functionality and full-stack skills. It is still under development — some edge cases may not be handled yet, and additional features are planned for future iterations.
+> 
 ## Product Preview
 
 **Login**
@@ -34,6 +36,7 @@ A web application that aggregates data from multiple public sources to estimate 
 - Supabase
 - Tailwind CSS
 - SQL (for database in Supabase)
+- Vercel (Deployment)
 
 ## How Popularity Metrics Are Calculated
 
@@ -42,7 +45,7 @@ The dashboard provides a popularity score based on the average of the following 
 - **Wikipedia**: article views and content relevance
 - **Google Trends**: search interest over time
 - **YouTube**: video-related popularity indicators
-- **News Sources**: volume and relevance of recent news coverage
+- **GNews**: volume and relevance of recent news coverage
 
 Each metric is displayed separately so users can compare different indicators rather than relying on a single score.
 
@@ -62,7 +65,7 @@ Create a `.env.local` file in the project root with your own keys:
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 YOUTUBE_API_KEY=
-NEWS_API_KEY=
+GNEWS_API_KEY=
 ```
 
 *(adjust the variable names to match whatever you named them for the YouTube/News/Google Trends integrations in your own code)*
